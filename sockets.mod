@@ -79,6 +79,6 @@ TYPE
 
    PROCEDURE Socket(domain, type, protocol: LONGINT):INTEGER IS "socket";
 
-   (* PROCEDURE Bind(sockfd: LONGINT; VAR addr: SockAddr; addrlen: LONGINT):INTEGER IS "bind"; *)
+   PROCEDURE Bind(sockfd: LONGINT; VAR addr: SockAddr; addrlen: LONGINT):INTEGER IS "bind";
 
 END sockets.
