@@ -1,4 +1,4 @@
-forking server example in oberon
+socket server example in oberon
 ================================
 
 work in progress...
