@@ -1,4 +1,4 @@
-MODULE sockets;
+MODULE Sockets;
 
 IMPORT Bit;
 
@@ -188,4 +188,4 @@ TYPE
 
    PROCEDURE Accept*(sockfd: INTEGER; VAR addr: SockAddrIn; VAR addrlen: INTEGER): INTEGER IS "accept";
 
-END sockets.
+END Sockets.

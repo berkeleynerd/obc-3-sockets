@@ -1,6 +1,6 @@
 all:
-	obc -c platform.mod types.mod sockets.mod s.mod 
-	obc -C -o s platform.k types.k sockets.k s.k
+	obc -c Platform.mod Sockets.mod EchoServer.mod 
+	obc -C -o EchoServer Platform.k Sockets.k EchoServer.k
 clean:
 	rm *.k
-	rm s
+	rm EchoServer
