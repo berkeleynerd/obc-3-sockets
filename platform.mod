@@ -1,5 +1,5 @@
 MODULE platform;
-(* IMPORT SYSTEM; *)
+IMPORT SYSTEM;
 
 CONST
   StdIn-  = 0;
@@ -7,26 +7,29 @@ CONST
   StdErr- = 2;
 
 TYPE
-  SignalHandler = PROCEDURE(signal: INTEGER); (* SYSTEM.INT32 *)
+  (* SignalHandler = PROCEDURE(signal: INTEGER); ( * SYSTEM.INT32 *)
 
-  ErrorCode*  = INTEGER;
-  FileHandle* = LONGINT;
+  ErrorCode*  = INTEGER; (* INTEGER; *)
+  FileHandle* = INTEGER; (* LONGINT; *)
 
-  FileIdentity* = RECORD
-    volume: LONGINT;  (* dev on Unix filesystems, volume serial number on NTFS *)
-    index:  LONGINT;  (* inode on Unix filesystems, file id on NTFS *)
-    mtime:  LONGINT;  (* File modification time, value is system dependent *)
-  END;
+  (* PROCEDURE -fork(): LONGINT "(LONGINT)fork()"; *)
+  PROCEDURE Fork*(): INTEGER IS "fork";
+
+  (* FileIdentity* = RECORD *)
+    (* volume: LONGINT;  ( * dev on Unix filesystems, volume serial number on NTFS *)
+    (* index:  LONGINT;  ( * inode on Unix filesystems, file id on NTFS *)
+    (* mtime:  LONGINT;  ( * File modification time, value is system dependent *)
+  (* END; *)
 
 VAR
-  LittleEndian-:   BOOLEAN;
-  PID-:            INTEGER;    (* Note: Must be updated by Fork implementation *)
-  CWD-:            ARRAY 256 OF CHAR;
+  (* LittleEndian-:   BOOLEAN; *)
+  (*PID-:            INTEGER;    ( * Note: Must be updated by Fork implementation *)
+  (* CWD-:            ARRAY 256 OF CHAR; *)
   (* TimeStart:       LONGINT; *)
 
-  SeekSet-:        INTEGER;
-  SeekCur-:        INTEGER;
-  SeekEnd-:        INTEGER;
+  (* SeekSet-:        INTEGER; *)
+  (* SeekCur-:        INTEGER; *)
+  (* SeekEnd-:        INTEGER; *)
 
   NL-:             ARRAY 3 OF CHAR;  (* Platform specific newline representation *)
 
@@ -259,6 +262,19 @@ BEGIN
   IF closefile(h) < 0 THEN RETURN err() ELSE RETURN 0 END
 END Close; *)
 
+   (* PROCEDURE err(): INTEGER IS "errno"; *)
+
+   PROCEDURE err(): INTEGER;
+   BEGIN
+       RETURN 57;
+   END err;
+
+   PROCEDURE closefile(fd: INTEGER): INTEGER IS "close";
+
+   PROCEDURE Close*(h: FileHandle): ErrorCode;
+   BEGIN
+      IF closefile(h) < 0 THEN RETURN err() ELSE RETURN 0 END
+   END Close;
 
 (* PROCEDURE -isatty(fd: LONGINT): INTEGER "isatty(fd)";
 
@@ -323,6 +339,8 @@ BEGIN
   RETURN 0;
 END Size; *)
 
+
+
 (* PROCEDURE -readfile (fd: LONGINT; p: SYSTEM.ADDRESS; l: LONGINT): LONGINT
 "(LONGINT)read(fd, (void * )(ADDRESS)(p), l)"; *)
 
@@ -331,6 +349,14 @@ BEGIN
   n := readfile(h, p, l);
   IF n < 0 THEN n := 0; RETURN err() ELSE RETURN 0 END
 END Read; *)
+
+PROCEDURE readfile(fd: INTEGER; p: INTEGER; l: INTEGER): INTEGER IS "read";
+
+PROCEDURE ReadBuf*(h: FileHandle; VAR b: ARRAY OF SYSTEM.BYTE; VAR n: INTEGER): ErrorCode;
+BEGIN
+  n := readfile(h, SYSTEM.ADR(b), LEN(b));
+  IF n < 0 THEN n := 0; RETURN err() ELSE RETURN 0 END
+END ReadBuf;
 
 (* PROCEDURE ReadBuf*(h: FileHandle; VAR b: ARRAY OF SYSTEM.BYTE; VAR n: LONGINT): ErrorCode;
 BEGIN
@@ -341,12 +367,15 @@ END ReadBuf; *)
 (* PROCEDURE -writefile(fd: LONGINT; p: SYSTEM.ADDRESS; l: LONGINT): SYSTEM.ADDRESS
 "write(fd, (void * )(ADDRESS)(p), l)"; *)
 
-(* PROCEDURE Write*(h: FileHandle; p: SYSTEM.ADDRESS; l: LONGINT): ErrorCode;
-  VAR written: SYSTEM.ADDRESS;
+PROCEDURE writefile(fd: INTEGER; p: INTEGER; l: INTEGER): INTEGER IS "write";
+
+(* PROCEDURE Write*(h: FileHandle; p: SYSTEM.ADDRESS; l: INTEGER): ErrorCode; *)
+PROCEDURE Write*(h: FileHandle; p: INTEGER; l: INTEGER): ErrorCode;
+  VAR written: INTEGER; (* SYSTEM.ADDRESS; *)
 BEGIN
   written := writefile(h, p, l);
   IF written < 0 THEN RETURN err() ELSE RETURN 0 END
-END Write; *)
+END Write;
 
 
 
