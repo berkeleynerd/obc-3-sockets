@@ -1,24 +1,28 @@
 MODULE EchoServer;
 
-IMPORT SYSTEM, Sockets, Platform, Out, Strings;
+IMPORT Out, Platform, Sockets, Strings, SYSTEM;
 
-PROCEDURE DoSmth(sock: Platform.FileHandle);
+PROCEDURE DoEcho(sock: Platform.FileHandle);
 VAR 
-  str, aff: ARRAY 256 OF CHAR;
+  str: ARRAY 256 OF CHAR;
   n:   INTEGER;
 BEGIN
-  aff := "Affirmative, Dave";
   IF Platform.ReadBuf(sock, str, n) # 0 THEN
-    Out.String("error reading from socket"); Out.Ln;
+    Out.String("error on socket.read"); 
+    Out.Ln;
   ELSE
-    str[n] := 0X; (* Make sure that received message is zero terminated *)
-    Out.String("received message is "); Out.String(str); Out.Ln;
+    Out.String("echoing message : "); 
+    Out.String(str); 
+    Out.Ln;
     
-    IF Platform.Write(sock, SYSTEM.ADR(aff), Strings.Length(aff)) # 0 THEN
-      Out.String("error writing to socket"); Out.Ln
+    str[n] := 0X; (* Make sure that received message is zero terminated *)
+
+    IF Platform.Write(sock, SYSTEM.ADR(str), Strings.Length(str)) # 0 THEN
+      Out.String("error on socket.write"); 
+      Out.Ln;
     END;
   END;
-END DoSmth;
+END DoEcho;
 
 PROCEDURE serve;
 CONST  
@@ -35,52 +39,43 @@ BEGIN
 
   sockfd := Sockets.Socket(Sockets.AfInet, Sockets.SockStream, 0);
   IF sockfd < 0 THEN
-    Out.String("error opening socket")
-  ELSE
-    Out.String("socket created.")
+    Out.String("error on socket.create");
+    Out.Ln;
   END;
-  Out.Ln;
 
   Sockets.SetSockAddrIn(Sockets.AfInet, Port, 0, ServAddr);
   IF Sockets.Bind(sockfd, ServAddr, SIZE(Sockets.SockAddr)) < 0 THEN
-    Out.String("error on binding")
-  ELSE
-    Out.String("binding completed.")
+    Out.String("error on socket.bind");
+    Out.Ln;
   END;
-  Out.Ln;
 
   IF Sockets.Listen(sockfd, MaxQueue) # 0 THEN
-    Out.String("listen() failed");
-  ELSE
-    Out.String("listen okay");
+    Out.String("error on socket.listen");
+    Out.Ln;
   END;
-  Out.Ln;
 
   LOOP
     sockaddrlen := SIZE(Sockets.SockAddrIn);
     newsockfd := Sockets.Accept(sockfd, ServAddr, sockaddrlen);
 
     IF newsockfd < 0 THEN
-      Out.String("error on accept")
-    ELSE
-      Out.String("accept okay")
+      Out.String("error on socket.accept");
+      Out.Ln;
     END;
-    Out.Ln;
 
     pid := Platform.Fork();
 
     IF pid < 0 THEN
-      Out.String("error on fork")
-    ELSIF pid = 0 THEN
-      Out.String("forked okay"); Out.Ln;
-      res := Platform.Close(sockfd);
-      DoSmth(newsockfd);
-      EXIT
-    ELSE
+      Out.String("error on system.fork");
       Out.Ln;
-      res := Platform.Close(newsockfd)
-    END
-  END
+    ELSIF pid = 0 THEN
+      res := Platform.Close(sockfd);
+      DoEcho(newsockfd);
+      EXIT;
+    ELSE
+      res := Platform.Close(newsockfd);
+    END;
+  END;
 
 END serve;
 
