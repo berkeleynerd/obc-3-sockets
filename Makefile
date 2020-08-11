@@ -1,6 +1,6 @@
 all:
-	obc -c Platform.mod Sockets.mod EchoServer.mod 
-	obc -C -o EchoServer Platform.k Sockets.k EchoServer.k
+	obc -C -o EchoServer Platform.mod Sockets.mod EchoServer.mod errno.c -lm
 clean:
 	rm *.k
+	rm *.o
 	rm EchoServer

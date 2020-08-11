@@ -13,9 +13,11 @@ MODULE Platform;
     IF closefile(h) < 0 THEN RETURN err() ELSE RETURN 0 END
   END Close;
 
+  PROCEDURE geterrno(): ErrorCode IS "get_errno";
+
   PROCEDURE err(): INTEGER;
   BEGIN
-    RETURN 57;
+    RETURN geterrno();
   END err;
 
   PROCEDURE Fork*(): INTEGER IS "fork";
