@@ -10,15 +10,15 @@ MODULE Platform;
 
   PROCEDURE Close*(h: FileHandle): ErrorCode;
   BEGIN
-    IF closefile(h) < 0 THEN RETURN err() ELSE RETURN 0 END
+    IF closefile(h) < 0 THEN RETURN Err() ELSE RETURN 0 END
   END Close;
 
   PROCEDURE geterrno(): ErrorCode IS "get_errno";
 
-  PROCEDURE err(): INTEGER;
+  PROCEDURE Err*(): INTEGER;
   BEGIN
     RETURN geterrno();
-  END err;
+  END Err;
 
   PROCEDURE Fork*(): INTEGER IS "fork";
 
@@ -27,7 +27,7 @@ MODULE Platform;
   PROCEDURE ReadBuf*(h: FileHandle; VAR b: ARRAY OF SYSTEM.BYTE; VAR n: INTEGER): ErrorCode;
   BEGIN
     n := readfile(h, SYSTEM.ADR(b), LEN(b));
-    IF n < 0 THEN n := 0; RETURN err() ELSE RETURN 0 END
+    IF n < 0 THEN n := 0; RETURN Err() ELSE RETURN 0 END
   END ReadBuf;
 
   PROCEDURE writefile(fd: INTEGER; p: INTEGER; l: INTEGER): INTEGER IS "write";
@@ -36,7 +36,7 @@ MODULE Platform;
     VAR written: INTEGER;
   BEGIN
     written := writefile(h, p, l);
-    IF written < 0 THEN RETURN err() ELSE RETURN 0 END
+    IF written < 0 THEN RETURN Err() ELSE RETURN 0 END
   END Write;
 
 END Platform.

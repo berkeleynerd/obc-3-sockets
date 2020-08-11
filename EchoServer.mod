@@ -35,7 +35,6 @@ VAR
   res:         Platform.ErrorCode;
   sockaddrlen: INTEGER;
 BEGIN
-
   sockfd := Sockets.Socket(Sockets.AfInet, Sockets.SockStream, 0);
   IF sockfd < 0 THEN
     Out.String("error on socket.create");
