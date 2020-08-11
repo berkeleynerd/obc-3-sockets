@@ -1,6 +1,6 @@
 MODULE Sockets;
 
-  IMPORT Bit;
+IMPORT Bit;
 
   CONST 
     SockStream*    = 1;
@@ -38,11 +38,6 @@ MODULE Sockets;
       SaData*:   ARRAY 14 OF CHAR (* 16? *)
     END;
 
-  PROCEDURE SetCShort(i: SHORTINT; VAR si: SHORTINT);
-  BEGIN
-    si := i;
-  END SetCShort;
-
   PROCEDURE SetCShortSwapped(i: SHORTINT; VAR si: SHORTINT);
   BEGIN
     si := SHORT(Bit.Or(Bit.And(LSR(i,8), 255), Bit.And(LSL(i,8), 65280)));
@@ -51,7 +46,7 @@ MODULE Sockets;
   PROCEDURE SetSockAddrIn*(family, port, inaddr: SHORTINT; VAR sai: SockAddrIn);
   VAR i: SHORTINT;
   BEGIN
-    SetCShort(family, sai.SinFamily);
+    sai.SinFamily := family;
     SetCShortSwapped(port, sai.SinPort);
     sai.SinAddr.SAddr := inaddr;
     i := 0; WHILE i < 8 DO sai.SinZero[i] := 0X; INC(i) END

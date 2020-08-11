@@ -13,7 +13,6 @@ BEGIN
   ELSE
     Out.String("echoing message : "); 
     Out.String(str); 
-    Out.Ln;
     
     str[n] := 0X; (* Make sure that received message is zero terminated *)
 
